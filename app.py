@@ -10,7 +10,7 @@ app = Flask(__name__)
 # Load NER model
 nlp = spacy.load("en_core_web_sm")
 
-# Neo4j connection - Add your password!!!
+# Neo4j connection - Add your password!
 driver = GraphDatabase.driver("bolt://localhost:7687", auth=("neo4j", "password"))
 
 # Upload route
