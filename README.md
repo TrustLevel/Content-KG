@@ -42,8 +42,9 @@ Use Docker Compose to start Memgraph and Memgraph Lab:
 ```
 docker-compose up
 ```
-•	Memgraph will run on bolt://localhost:7687.
-•	Memgraph Lab will be available at http://localhost:3000.
+
+• Memgraph will run on bolt://localhost:7687.
+• Memgraph Lab will be available at http://localhost:3000.
  
 5. Ingest Data into Memgraph
      a. Run the Streamlit app, which handles both CSV file uploads and querying:
@@ -72,7 +73,14 @@ If you want to visualize and explore the data in the graph database, you can use
 	1. Visit http://localhost:3000 to access the Memgraph Lab interface.
 	2. Use Cypher queries to explore the relationships between articles and entities.
 
-Example Workflow
+
+## Testing
+Run the tests for the application using pytest:
+```
+Run unit and integration tests using pytest:
+pytest tests/
+```
+## Example Workflow
 
 1. Upload CSV: The user uploads a CSV file of news articles.
 2. Process Articles: The app processes each article:
@@ -81,13 +89,6 @@ Example Workflow
 	c. Stores the articles, entities, and bias scores in Memgraph.
 3. Query and Explore: The user can search the Knowledge Graph through Streamlit and explore relationships between articles and entities in Memgraph Lab.
 
-
-7. Testing
-Run the tests for the application using pytest:
-```
-Run unit and integration tests using pytest:
-pytest tests/
-```
 
 ## Troubleshooting
 1. gRPC Bias Detection: Ensure the gRPC Bias Detection API is running and accessible at the URL provided in your .env file.
