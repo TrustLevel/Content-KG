@@ -20,6 +20,7 @@ This repository provides a system that processes articles, extracts named entiti
 git clone https://github.com/your-username/trustlevel-app.git
 cd trustlevel-app
 
+
 2. Install Python Dependencies
 ```bash
 python3 -m venv venv
