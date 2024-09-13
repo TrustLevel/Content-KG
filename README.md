@@ -70,21 +70,19 @@ Once the data is ingested, you can use the Streamlit interface to query articles
 7. Explore the Knowledge Graph Visually
 
 If you want to visualize and explore the data in the graph database, you can use Memgraph Lab:
-
-	1.	Visit http://localhost:3000 to access the Memgraph Lab interface.
-	2.	Use Cypher queries to explore the relationships between articles and entities.
+	1. Visit http://localhost:3000 to access the Memgraph Lab interface.
+	2. Use Cypher queries to explore the relationships between articles and entities.
 
 Example Workflow
 
-	1.	Upload CSV: The user uploads a CSV file of news articles.
-	2.	Process Articles: The app processes each article:
-	•	Extracts named entities (persons, organizations, locations) using the NER model.
-	•	Calculates a bias score using the gRPC Bias Detection API.
-	•	Stores the articles, entities, and bias scores in Memgraph.
-	3.	Query and Explore: The user can search the Knowledge Graph through Streamlit and explore relationships between articles and entities in Memgraph Lab.
+1. Upload CSV: The user uploads a CSV file of news articles.
+2. Process Articles: The app processes each article:
+	a. Extracts named entities (persons, organizations, locations) using the NER model.
+	b. Calculates a bias score using the gRPC Bias Detection API.
+	c. Stores the articles, entities, and bias scores in Memgraph.
+3. Query and Explore: The user can search the Knowledge Graph through Streamlit and explore relationships between articles and entities in Memgraph Lab.
 
 Visit http://localhost:8501 to query the articles, entities, and bias scores.
-
 
 
 7. Testing
@@ -95,13 +93,13 @@ pytest tests/
 ```
 
 8. Troubleshooting
-	•	gRPC Bias Detection: Ensure the gRPC Bias Detection API is running and accessible at the URL provided in your .env file.
-	•	Memgraph Connection Issues: If Memgraph isn’t connecting, ensure that Docker is running and that Memgraph is up and running on the correct port (7687).
-	•	File Upload Errors: Ensure that the uploaded CSV file matches the expected format (with columns for Headline, Author, Publisher, and Text).
+	1. gRPC Bias Detection: Ensure the gRPC Bias Detection API is running and accessible at the URL provided in your .env file.
+	2.  Memgraph Connection Issues: If Memgraph isn’t connecting, ensure that Docker is running and that Memgraph is up and running on the correct port (7687).
+	3. File Upload Errors: Ensure that the uploaded CSV file matches the expected format (with columns for Headline, Author, Publisher, and Text).
 
 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the Apache-2.0 License - see the LICENSE file for details.
 
 Authors: TrustLevel Team
 Let us know if you’d like any further adjustments or details!
