@@ -46,18 +46,17 @@ docker-compose up
 •	Memgraph Lab will be available at http://localhost:3000.
  
 5. Ingest Data into Memgraph
-
-     1. Run the Streamlit app, which handles both CSV file uploads and querying:
+     a. Run the Streamlit app, which handles both CSV file uploads and querying:
       ```
       streamlit run src/app.py
       ```
-     2. Upload a CSV file containing articles in the Streamlit interface.
+     b. Upload a CSV file containing articles in the Streamlit interface.
      Example CSV Format:
       ```
       Headline,Author,Publisher,Text
       "Sample Headline","Author Name","Publisher Name","This is the article text."
       ```
-      3. The app will extract entities, calculate bias scores, and ingest the data into Memgraph.
+      c. The app will extract entities, calculate bias scores, and ingest the data into Memgraph.
 
 
 6. Query the Knowledge Graph
@@ -82,8 +81,6 @@ Example Workflow
 	c. Stores the articles, entities, and bias scores in Memgraph.
 3. Query and Explore: The user can search the Knowledge Graph through Streamlit and explore relationships between articles and entities in Memgraph Lab.
 
-Visit http://localhost:8501 to query the articles, entities, and bias scores.
-
 
 7. Testing
 Run the tests for the application using pytest:
@@ -92,14 +89,14 @@ Run unit and integration tests using pytest:
 pytest tests/
 ```
 
-8. Troubleshooting
-	1. gRPC Bias Detection: Ensure the gRPC Bias Detection API is running and accessible at the URL provided in your .env file.
-	2.  Memgraph Connection Issues: If Memgraph isn’t connecting, ensure that Docker is running and that Memgraph is up and running on the correct port (7687).
-	3. File Upload Errors: Ensure that the uploaded CSV file matches the expected format (with columns for Headline, Author, Publisher, and Text).
+## Troubleshooting
+1. gRPC Bias Detection: Ensure the gRPC Bias Detection API is running and accessible at the URL provided in your .env file.
+2. Memgraph Connection Issues: If Memgraph isn’t connecting, ensure that Docker is running and that Memgraph is up and running on the correct port (7687).
+3. File Upload Errors: Ensure that the uploaded CSV file matches the expected format (with columns for Headline, Author, Publisher, and Text).
 
-License
-
+## License
 This project is licensed under the Apache-2.0 License - see the LICENSE file for details.
 
-Authors: TrustLevel Team
+## Authors
+TrustLevel Team
 Let us know if you’d like any further adjustments or details!
