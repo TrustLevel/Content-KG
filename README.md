@@ -32,12 +32,14 @@ pip install -r requirements.txt
 ```
 
 3. Set Up Environment Variables
+
 Copy the example environment file and adjust the variables as needed:
 ```
 cp server.env
 ```
 
 4. Start Memgraph Using Docker
+
 Use Docker Compose to start Memgraph and Memgraph Lab:
 ```
 docker-compose up
@@ -47,6 +49,7 @@ docker-compose up
 • Memgraph Lab will be available at http://localhost:3000.
  
 5. Ingest Data into Memgraph
+
      a. Run the Streamlit app, which handles both CSV file uploads and querying:
       ```
       streamlit run src/app.py
@@ -60,7 +63,7 @@ docker-compose up
       c. The app will extract entities, calculate bias scores, and ingest the data into Memgraph.
 
 
-6. Query the Knowledge Graph
+7. Query the Knowledge Graph
 
 Once the data is ingested, you can use the Streamlit interface to query articles and entities based on a search term.
 
@@ -75,11 +78,13 @@ If you want to visualize and explore the data in the graph database, you can use
 
 
 ## Testing
+
 Run the tests for the application using pytest:
 ```
 Run unit and integration tests using pytest:
 pytest tests/
 ```
+
 ## Example Workflow
 
 1. Upload CSV: The user uploads a CSV file of news articles.
