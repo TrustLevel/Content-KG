@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+message BiasRequest {
+    string text = 1;
+}
+
+message BiasResponse {
+    double bias_score = 1;
+}
+
+service TrustLevelBiasService {
+    rpc AnalyzeBias(BiasRequest) returns (BiasResponse);
+}

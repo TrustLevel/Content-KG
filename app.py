@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 import spacy
 import pandas as pd
-from service import get_bias_score
+from grpc.service import get_bias_score
 from neo4j import GraphDatabase
 
 # Initialize Flask app
