@@ -5,7 +5,8 @@ Flask==2.1.0
 streamlit==1.6.0
 
 # spaCy for Named Entity Recognition (NER)
-spacy==3.2.0
+spacy==3.1.0
+thinc==8.0.15
 
 # gRPC dependencies for communication with the Bias Detector
 grpcio==1.39.0
