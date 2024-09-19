@@ -1,56 +1,70 @@
-from flask import Flask, request, jsonify
+import streamlit as st
 import pandas as pd
-from ner_module import extract_entities  # Import NER function
-from grpc_bias_service.service import get_bias_score  # Import gRPC function for bias detection
-from kg_helpers import connect_to_memgraph, create_article_node, create_entity_node, create_relationship  # Memgraph helpers
+import spacy
+from memgraph import Memgraph
 
-# Initialize Flask app
-app = Flask(__name__)
+# Initialize SpaCy model
+nlp = spacy.load("en_core_web_sm")
 
-# Connect to Memgraph (replaces Neo4j)
-connection = connect_to_memgraph()
+# Connect to Memgraph
+memgraph = Memgraph()
 
-# Upload route
-@app.route('/upload', methods=['POST'])
-def upload_file():
-    if 'file' not in request.files:
-        return 'No file part', 400
-    file = request.files['file']
-    if file.filename == '':
-        return 'No selected file', 400
+def add_article_to_graph(article, entities):
+    query = """
+    MERGE (a:Article {title: $title, trust_score: $trust_score})
+    WITH a
+    UNWIND $entities as entity
+    MERGE (e:Entity {name: entity})
+    MERGE (a)-[:MENTIONS]->(e)
+    """
+    memgraph.execute(query, {'title': article['title'], 'trust_score': article['trust_score'], 'entities': entities})
 
-    df = pd.read_csv(file)
+def process_article(content):
+    doc = nlp(content)
+    entities = [ent.text for ent in doc.ents]
+    return entities
 
-    results = []
+# Function to search for articles mentioning a specific entity and sort by trust score
+def query_articles_by_entity(entity):
+    query = """
+    MATCH (a:Article)-[:MENTIONS]->(e:Entity {name: $entity})
+    RETURN a.title AS title, a.trust_score AS trust_score
+    ORDER BY a.trust_score DESC
+    """
+    result = memgraph.execute(query, {'entity': entity})
+    return result
+
+# Streamlit interface
+st.title("Knowledge Graph App")
+
+# CSV file uploader
+csv_file = st.file_uploader("Upload a CSV file with articles", type=["csv"])
+
+if csv_file:
+    # Load the CSV file into a DataFrame
+    df = pd.read_csv(csv_file)
+    
+    # Process each article
     for _, row in df.iterrows():
-        text = row['Text']
+        article = {'title': row['title'], 'content': row['content'], 'trust_score': row['trust_score']}
+        entities = process_article(article['content'])
+        add_article_to_graph(article, entities)
+    
+    st.success("Articles and entities added to the graph!")
 
-        # Step 1: NER processing
-        entities = extract_entities(text)
+# Entity search input
+entity_search = st.text_input("Enter an entity to search for articles mentioning it:")
 
-        # Step 2: Bias detection using gRPC
-        bias_score = get_bias_score(text)
+if entity_search:
+    try:
+        # Query articles mentioning the entity
+        articles = query_articles_by_entity(entity_search)
 
-        # Step 3: Add article and entities to Knowledge Graph
-        add_to_knowledge_graph(row['Headline'], row['Author'], row['Publisher'], bias_score, entities)
-
-        results.append({
-            'article': row['Headline'],
-            'entities': entities,
-            'bias_score': bias_score
-        })
-
-    return jsonify(results)
-
-def add_to_knowledge_graph(title, author, publisher, bias_score, entities):
-    # Use Memgraph connection instead of Neo4j
-    # Insert article node
-    create_article_node(connection, title, author, publisher, bias_score)
-
-    # Insert entity nodes and relationships
-    for entity, label in entities:
-        create_entity_node(connection, entity)
-        create_relationship(connection, title, entity)
-
-if __name__ == '__main__':
-    app.run(debug=True)
+        if articles:
+            st.write(f"Articles mentioning '{entity_search}':")
+            for article in articles:
+                st.write(f"Title: {article['title']} - Trust Score: {article['trust_score']}")
+        else:
+            st.write(f"No articles mention '{entity_search}'.")
+    except ServiceUnavailable:
+        st.error("Memgraph service is not available. Ensure Memgraph is running and connected.")
