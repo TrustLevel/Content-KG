@@ -1,37 +1,6 @@
-# Flask web framework for handling requests
-Flask==2.1.0
-
-# Streamlit for building the web app interface
-streamlit==1.6.0
-
-# spaCy for Named Entity Recognition (NER)
-spacy==3.1.0
-thinc==8.0.15
-
-# gRPC dependencies for communication with the Bias Detector
-grpcio==1.39.0
-grpcio-tools==1.39.0
-protobuf==3.19.1
-
-# Memgraph client for interacting with the Knowledge Graph
-mgclient==1.2.0
-
-# Required for gRPC protobuf handling and Google APIs
-googleapis-common-protos==1.53.0
-
-# General utilities
-numpy==1.21.0
-pandas==1.3.0
-
-# Additional dependency for wheel, ensuring that binary packages are installed
-wheel==0.37.1
-
-# For testing
-pytest==6.2.4
-
-# For loading environment variables
-python-dotenv==0.19.0
-
-# SingularityNET SDK and CLI for interacting with bias detection API
-snet.sdk==0.1.0
-snet-cli==0.2.0
+streamlit
+pandas
+grpcio
+grpcio-tools
+snet.sdk
+snet-cli
