@@ -32,9 +32,9 @@ pip install -r requirements.txt
 ```
 
 4. Start Streamlit App to handle CSV upload and extract entities:
-   ```
-   streamlit run app.py
-	```
+```
+streamlit run app.py
+```
 
 Streamlit will be available at http://localhost:8501.
 
@@ -42,8 +42,8 @@ Example CSV Format:
 titel, text, author, trust_score
  
 5. Close and restart Streamlit App to explore and query the Knowledge Graph:
- ```
-   streamlit run knowledge_graph.py
+```
+streamlit run knowledge_graph.py
 ```
 Enter a keyword or entity (e.g., “Trump”, “Israel”, “Gaza”).
 The results will show related articles, and trust scores.
