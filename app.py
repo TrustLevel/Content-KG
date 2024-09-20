@@ -1,54 +1,82 @@
+
 import streamlit as st
 import pandas as pd
-import grpc
-import trustlevel_pb2
-import trustlevel_pb2_grpc
-import service  # Import service file to connect with the bias service
-import config   # Import config file for necessary configurations
+import spacy
 
-# Function to call the TrustLevel Bias service for each article
-def get_bias_score(article_text):
-    try:
-        # Connect to the TrustLevel Bias service using the provided gRPC code
-        channel = grpc.insecure_channel(config.SNET_ENDPOINT)
-        stub = trustlevel_pb2_grpc.TrustLevelStub(channel)
-        request = trustlevel_pb2.ArticleRequest(article=article_text)
-        response = stub.GetBiasScore(request)
-        return response.score
-    except Exception as e:
-        st.error(f"Error processing article: {e}")
-        return None
+# Load spaCy model for English
+nlp = spacy.load("en_core_web_sm")
 
-# Streamlit UI
-st.title("TrustLevel Bias Detector")
+# Define entity types to filter
+ENTITY_TYPES = ["PERSON", "ORG", "GPE", "LOC", "DATE", "EVENT", "NORP", "PRODUCT"]
+
+# Streamlit app title
+st.title("News Article Entity Extractor")
 
 # File uploader for CSV
-uploaded_file = st.file_uploader("Upload a CSV file with news articles", type=["csv"])
+uploaded_file = st.file_uploader("Upload a CSV file containing news articles", type="csv")
 
-# Process the uploaded file
+# Function to extract entities from text
+def extract_entities(text):
+    doc = nlp(text)
+    entities = {entity_type: [] for entity_type in ENTITY_TYPES}  # Create empty lists for each entity type
+    for ent in doc.ents:
+        if ent.label_ in ENTITY_TYPES:
+            entities[ent.label_].append(ent.text)
+    return entities
+
+# Function to convert the list of entities to a comma-separated string
+def convert_entities_to_string(entities):
+    return {entity_type: ', '.join(set(entity_list)) for entity_type, entity_list in entities.items()}
+
+# Process the uploaded CSV file
 if uploaded_file is not None:
-    # Read the CSV file
+    # Read the CSV file into a dataframe
     df = pd.read_csv(uploaded_file)
-    
-    if 'title' in df.columns and 'text' in df.columns:
-        st.write("Uploaded CSV Preview:")
-        st.dataframe(df.head())
 
-        # Prepare a new column for bias scores
-        df['bias_score'] = None
+    # Display the full CSV
+    st.subheader("Uploaded CSV Content")
+    st.dataframe(df)
 
-        # Loop over each article and get the bias score
+    # Create a DataFrame to store entities for each article
+    extracted_entities_df = pd.DataFrame(columns=['title', 'author', 'publisher', 'trust_score'] + ENTITY_TYPES)
+
+    # Process each article and extract entities
+    st.subheader("Extracted Entities in Spreadsheet Format")
+
+    # Ensure 'title', 'text', 'author', 'publisher', and 'trust_score' columns exist
+    if all(col in df.columns for col in ['title', 'text', 'author', 'publisher', 'trust_score']):
         for index, row in df.iterrows():
-            article_text = f"{row['title']} {row['text']}"  # Combine title and text for analysis
-            bias_score = get_bias_score(article_text)  # Call the service
-            df.at[index, 'bias_score'] = bias_score
+            # Combine title and text for NER
+            text = f"{row['title']} {row['text']}"
+            entities = extract_entities(text)
+            
+            # Convert the entities to a comma-separated string for the spreadsheet view
+            string_entities = convert_entities_to_string(entities)
+            
+            # Prepare a row with title, author, publisher, trust_score, and entities
+            row_data = {
+                'title': row['title'],
+                'author': row['author'],
+                'publisher': row['publisher'],
+                'trust_score': row['trust_score']
+            }
+            row_data.update(string_entities)
+            
+            # Convert row_data to a DataFrame and append to extracted_entities_df
+            row_df = pd.DataFrame([row_data])
+            extracted_entities_df = pd.concat([extracted_entities_df, row_df], ignore_index=True)
 
-        # Display results in a table
-        st.subheader("Bias Scores for Articles")
-        st.dataframe(df[['title', 'bias_score']])
+        # Display the extracted entities DataFrame in a spreadsheet format
+        st.subheader("Extracted Entities Table")
+        st.dataframe(extracted_entities_df)
 
-        # Option to download results as a CSV file
-        csv = df.to_csv(index=False)
-        st.download_button(label="Download results as CSV", data=csv, mime="text/csv")
+        # Provide an option to download the DataFrame as a CSV file
+        csv = extracted_entities_df.to_csv(index=False)
+        st.download_button(
+            label="Download Extracted Entities as CSV",
+            data=csv,
+            file_name='extracted_entities.csv',
+            mime='text/csv',
+        )
     else:
-        st.error("The uploaded CSV must contain 'title' and 'text' columns.")
+        st.error("The CSV file must contain 'title', 'text', 'author', 'publisher', and 'trust_score' columns.")
