@@ -40,6 +40,8 @@ Streamlit will be available at http://localhost:8501.
 
 Example CSV Format:
 titel, text, author, trust_score
+
+You can use the example file to test the app (Note: trust scores in this file are just random values).
  
 5. Close and restart Streamlit App to explore and query the Knowledge Graph:
 ```
