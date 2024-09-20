@@ -1,5 +1,3 @@
--> Under Construction...
-
 # TrustLevel Knowledge Graph with Bias Detection and NER
 
 This repository provides a system that processes articles, extracts named entities, detects bias using a gRPC API, and ingests the data into a Knowledge Graph. You can query the Knowledge Graph using a Streamlit interface.
