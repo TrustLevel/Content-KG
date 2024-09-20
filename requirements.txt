@@ -1,6 +1,0 @@
-streamlit
-pandas
-grpcio
-grpcio-tools
-snet.sdk
-snet-cli
